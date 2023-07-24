@@ -1,4 +1,4 @@
-import { attr, clearContents, diceAnimation, endScroll, getNode, getNodes, insertLast } from "./lib/index.js";
+import { attr, clearContents, diceAnimation, endScroll, getNode, getNodes, insertLast, visibleElement, disableElement, enableElement, invisibleElement  } from "./lib/index.js";
 
 
 // [phase-1] 주사위 굴리기
@@ -37,16 +37,18 @@ const tbody = getNode('.recordList tbody');
 
 // 진짜 진짜 쉬운 과제
 
-// disableElement(node)
-// enableElement(node)
 // isDisableState(node)  => true / false
 
-// visibleElement(node)
-// invisibleElement(node)
 // isVisibleState(node) => true / false
+
+
+
+
 
 let count = 0;
 let total = 0;
+
+
 
 function createItem(value){
   // 뿌려줄 템플릿 만들기
@@ -79,15 +81,14 @@ const handleRollingDice = ((e)=>{
 
     if(!isClicked){ // 주사위 play
       stopAnimation = setInterval(diceAnimation, 100);
-      recordButton.disabled = true;
-      resetButton.disabled = true;
+      visibleElement(recordButton)
+      visibleElement(resetButton)
 
 
     }else{ // 주사위 stop
       clearInterval(stopAnimation)
-      recordButton.disabled = false;
-      resetButton.disabled = false;
-
+      disableElement(recordButton)
+      disableElement(resetButton)
     }
 
     isClicked = !isClicked;
@@ -99,15 +100,14 @@ const handleRollingDice = ((e)=>{
 // total 값이 나올 수 있도록
 
 function handleRecord(){
-  recordListWrapper.hidden = false;
+  invisibleElement(recordListWrapper)
   renderRecordItem()
 }
 
 function handleReset(){
-  recordListWrapper.hidden = true;
-  recordButton.disabled = true;
-  resetButton.disabled = true;
-
+  enableElement(recordListWrapper)
+  visibleElement(recordButton)
+  visibleElement(resetButton)
   clearContents(tbody);
   
   count = 0;
@@ -115,6 +115,10 @@ function handleReset(){
 
 }
 
+
+
 startButton.addEventListener('click',handleRollingDice);
 recordButton.addEventListener('click',handleRecord);
 resetButton.addEventListener('click',handleReset);
+
+
