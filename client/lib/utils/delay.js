@@ -41,25 +41,20 @@ const defaultOptions = {
   errorMessage:'알 수 없는 오류가 발생했습니다.'
 }
 
-function delayP(options){
+export function delayP(options){
   
   let config = {...defaultOptions}
 
-
-  
   if(typeof options === 'number'){
     config.timeout = options;
   }
   
   if(typeof options === 'object'){
-    config = {...defaultOptions, ...options}   //합성을 하는건데, 뒤에있는애가 덮어씌어준다.
+    config = {...defaultOptions,...options}
   }
 
+  const {shouldReject,data,errorMessage,timeout}  = config;
   
-  
-  const {shouldReject,data,errorMessage,timeout} = config
-
-
   return new Promise((resolve, reject) => {
     setTimeout(() => {
 
@@ -74,17 +69,15 @@ function delayP(options){
 
 
 
-
 delayP({shouldReject:false})
 .then((res)=>{
-//   console.log( res );
+  // console.log( res );
 })
 .catch(({message})=>{
-    alert(message)
-
+  alert(message)
 })
 .finally(()=>{
-    // console.log('어쨋든 실행됩니다');
+  // console.log('어쨋든 실행합니다.');
 })
 
 
@@ -94,113 +87,63 @@ delayP({shouldReject:false})
 
 
 
-async function delayA(){      // promise 객체를 추출한다.
-    return '성공'
+
+async function delayA(){
+  return '성공!'
 }
 
-// const data =  await delayA() 
+const data = await delayA();
 
-// console.log(data);
+// console.log( data );
 
 
-// async - 함수가 promise 객체를 반환 하도록 하는것이 특징, await 사용
-//       - await 사용
+
+// async - 함수가 promise 객체를 반환 하도록
+//       - await 사용 
 
 // await - 코드의 실행 흐름 제어 (멈춰)
-//       - result 값 가져오기
+//       - result값 가져오기 
 
 
-// async function 라면끓이기(){
+async function 라면끓이기(){
 
-//     const 물 = await delayP({data : '물넣기'})
-//     console.log(물);
+  delayP({data:'물넣기'}).then((res)=>{
+    console.log( res );
+  })
 
-//     const 스프 = await delayP({data : '스프넣기'})
-//     console.log(스프);
+  const 스프 = await delayP({data:'스프넣기'})
+  console.log(스프);
 
-//     const 면 = await delayP({data : '면넣기'})
-//     console.log(면);
+  const 면 = await delayP({data:'면넣기'})
+  console.log(면);
 
-//     const 계란 = await delayP({data : '계란넣기'})
-//     console.log('계란넣기');
+  const 계란 = await delayP({data:'계란넣기'})
+  console.log(계란);
 
-//     const 접시 = await delayP({data : '접시'})
-//     console.log(접시);
-// }
+  const 접시 = await delayP({data:'접시'})
+  console.log(접시);
+}
 
 
 // 라면끓이기()
 
-
-// then 결과 가져오기 
-// await 결과도 가져오기
-
+// then 결과 가져오기
+// await 결과 가져오기 
 
 async function getData(){
 
-    const data = xhrPromise.get('https://pokeapi.co/api/v2/pokemon/24')
+  const data = xhrPromise.get('https://pokeapi.co/api/v2/pokemon/76')
+
+  // data.then((res)=>{
+  //   console.log( res );
+  // })
   
-    // data.then((res)=>{
-    //   console.log( res );
-    // })
-    
-    const pokemon = await data;
-  
-    // console.log( pokemon.sprites['front_default'] );
-  
-    insertLast(document.body,`<img src="${pokemon.sprites['front_default']}" alt="" />`)
-  
-  }
-  
-//   getData()
+  const pokemon = await data;
 
+  console.log( pokemon.sprites['front_default'] );
 
+  insertLast(document.body,`<img src="${pokemon.sprites['front_default']}" alt="" />`)
 
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// getData()

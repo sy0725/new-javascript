@@ -1,50 +1,108 @@
+/* global gsap */
+
+import { 
+  attr,
+  tiger,
+  delayP,
+  insertLast, 
+  getNode as $, 
+  changeColor,
+  renderSpinner,
+  clearContents,
+  renderUserCard,
+  renderEmptyCard,
+ } from './lib/index.js';
+
+// [phase-1]
+// 1. tiger 함수를 사용해서 user를 가져와 주세요.
+// 2. 함수 안으로 넣기
+// 3. 유저 데이터 랜더링 
+//      - html template을 만든다. 
+//      - 유저 data를 넘겨주기.
+//      - inserLast 사용하기.
+// 4. 함수 분리 하기 
+
+
+// [phase-2]
+// 1. 에러가 발생 했을 때 
+// 2. empty svg를 생성하고 랜더링 해주세요 
+// 3. 함수 분리
+
+
+// [phase-3]
+// json-server 구성
+// data 설계
+// get, delete 통신 localhost
+// delete => 리랜더링(clear,render)
+
+
+const userCardInner = $('.user-card-inner');
+
+async function renderUserList(){
+  renderSpinner(userCardInner)
+  try{
+
+    await delayP();
+
+    gsap.to('.loadingSpinner',{
+      opacity:0,
+      onComplete(){
+        $('.loadingSpinner').remove();
+      }
+    })
+    const response = await tiger.get('http://localhost:3000/users')
+    const userData = response.data;
+
+    userData.forEach((item)=> renderUserCard(userCardInner,item))
+
+    changeColor('.user-card');
+
+    gsap.to('.user-card',{
+      x:0,
+      opacity:1,
+      stagger:0.1
+    })
+  }
+
+  catch(err){
+    console.log( err );
+    renderEmptyCard(userCardInner)
+    // location.href = '404.html'
+  }
+}
+
+
+renderUserList()
 
 
 
-import { insertLast, xhrPromise } from "./lib/index.js";
-import { tiger } from './lib/utils/tiger.js';
+
+// 버튼을 클릭 했을 때 해당 article의 id 값을 가져옴.
+
+// - 이벤트 위임 e.target
+// - button 선택하기 -> 클릭한 대상의 가장 가까운... method
+// - attr() ,  dataset
 
 
-const URL = 'https://jsonplaceholder.typicode.com/users'
-
-// const data = tiger.get('https://jsonplaceholder.typicode.com/users')
-
-// console.log(data);
-
-// fetch 는왜 쓰는건가요 ? 
+function handleDelete(e){
+  const button = e.target.closest('button');
+  const article = e.target.closest('article')
 
 
+  if(!article || !button) return;
 
- 
+  const id = attr(article,'data-index').slice(5);
 
-
-
-// then , await 은 서버에서 떨어진 결과가 나올때까지 기다렸다가 데이터가 오면 resolve 나 reject 를 반환한다. 데이터가 오지도않았는데 실행이되지않는다 .그말으 즉 데이터가 잘 넘어왔다면 resolve 를 반환하고 데이터가 안왓다면 reject 를 반환한다. 그렇기에 '코드실행흐름제어' 라고하는거다.
-// 그렇기에 error 이 발생하지안흔다.
-
-// 여기서 .json을 하는 이유는 모든 데이터는 문자화가 되어서 넘어오는데 데이터화를 해주는것이 .json()이다 - 응답을 파싱해 JSON 객체로 변경함
-
-//  한번 url 데이터를 불러와 응답에 넣고 그 받은 데이터를 await 을 이용해서 결과물을 데이터에 넣은 다음에 ,json을 이용해서 데이터를 받음과 동시에 await 을 써서 확실한 데이터를 받는다 . await 은 2번을 써야한다
-
-// await 역할은
-// 1) 코드실행흐름제어 - resolve, reject 반환할때까지
-// 2) result 값 내뱉는 역할
-
-const 응답 = (fetch(URL));
-
-const 데이터 = await 응답
-
-const 유저데이터 = await 데이터.json()
-
-
-유저데이터.forEach((유저)=>{
-    insertLast(document.body,`<div>${유저.name}</div>`)
-})
-console.log();
+  
+  tiger.delete(`http://localhost:3000/users/${id}`)
+  .then(()=>{
+    // 컨텐츠 항목 전체 지우기
+    clearContents(userCardInner);
+    renderUserList();
+  })
+}
 
 
 
 
-// await data
-
-// console.log();
+userCardInner.addEventListener('click',handleDelete);
